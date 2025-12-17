@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
-#include "../src/factory/parser_factory.h"
-#include "../src/adapter/idocument_parser.h"
+#include "../src/parsers/parser_factory.h"
+#include "../src/parsers/idocument_parser.h"
 #include "../src/exception/custom_exceptions.h"
 #include "../src/textfilters/filter_factory.h"
 #include "../src/textfilters/text_filter.h"
@@ -113,7 +113,6 @@ public:
     }
 };
 
-// Тестовый класс для FilterFactory
 class FilterFactoryTest: public ::testing::Test {
 protected:
     OutputCapture output;

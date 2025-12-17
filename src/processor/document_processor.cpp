@@ -5,8 +5,8 @@ TDocumentProcessor::TDocumentProcessor(TParserFactory& factory)
 }
 
 TDocumentInfo TDocumentProcessor::Process(const std::string& path,
-                                        const std::vector<std::string>& filters,
-                                        ProgressCallback progress) {
+                                          const std::vector<std::string>& filters,
+                                          ProgressCallback progress) {
     try {
         progress(10);
         auto parser = factory_.CreateParserForFile(path);
