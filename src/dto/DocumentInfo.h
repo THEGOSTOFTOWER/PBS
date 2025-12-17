@@ -6,5 +6,4 @@
 struct DocumentInfo {
     std::string text;
     std::map<std::string, std::string> metadata;
-    std::size_t page_count = 0;
 };

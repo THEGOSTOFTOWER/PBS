@@ -13,7 +13,7 @@ public:
     DocumentInfo Parse(const std::string& file_path) override {
         try {
             int err = 0;
-            zip* archive = zip_open(file_path.c_str(), 0, &err);
+            zip* archive = zip_open(file_path.c_str(), ZIP_RDONLY, &err);
             if (!archive) {
                 throw std::runtime_error("Failed to open DOCX file");
             }
@@ -47,7 +47,6 @@ public:
             }
 
             DocumentInfo info;
-            info.page_count = 1;
 
             for (auto node : doc.select_nodes("//w:t")) {
                 info.text += node.node().text().get();
