@@ -5,14 +5,28 @@
 
 class TPdfParserAdapter final: public TIDocumentParser {
 private:
-    TLegacyPdfParser OldParser;
+    std::unique_ptr<TLegacyPdfParser> OldParser;
 
 public:
+    TPdfParserAdapter()
+        : OldParser(std::make_unique<TLegacyPdfParser>()) {
+    }
+
+    explicit TPdfParserAdapter(std::unique_ptr<TLegacyPdfParser> parser)
+        : OldParser(std::move(parser)) {
+    }
+
+    TPdfParserAdapter(const TPdfParserAdapter&) = delete;
+    TPdfParserAdapter& operator=(const TPdfParserAdapter&) = delete;
+
+    TPdfParserAdapter(TPdfParserAdapter&&) = default;
+    TPdfParserAdapter& operator=(TPdfParserAdapter&&) = default;
+
     bool SupportsFormat(const std::string& extension) const override {
         return extension == "pdf";
     }
 
     TDocumentInfo Parse(const std::string& file_path) override {
-        return OldParser.Parse(file_path);
+        return OldParser->Parse(file_path);
     }
 };

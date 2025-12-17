@@ -1,10 +1,12 @@
+#pragma once
+
 #include "dto/document_info.h"
 #include "fstream"
 #include "sstream"
 
 class TLegacyTextParser {
 public:
-    TDocumentInfo Parse(const std::string& file_path) {
+    virtual TDocumentInfo Parse(const std::string& file_path) {
         try {
             std::ifstream file(file_path);
             if (!file.is_open()) {

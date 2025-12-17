@@ -1,10 +1,12 @@
+#pragma once
+
 #include "dto/document_info.h"
 #include <zip.h>
 #include <pugixml.hpp>
 
 class TLegacyDocxParser {
 public:
-    TDocumentInfo Parse(const std::string& file_path) {
+    virtual TDocumentInfo Parse(const std::string& file_path) {
         try {
             int err = 0;
             zip* archive = zip_open(file_path.c_str(), 0, &err);

@@ -6,6 +6,8 @@ mkdir build & cd build
 
 cmake .. -DBUILD_TESTS=ON (для тестов)
 
+make
+
 bash ../test/run_style_check.sh - проверка на стиль
 
 ./test - тесты

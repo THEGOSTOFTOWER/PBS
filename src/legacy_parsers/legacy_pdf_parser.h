@@ -1,3 +1,5 @@
+#pragma once
+
 #include "dto/document_info.h"
 
 #include <poppler/cpp/poppler-document.h>
@@ -5,7 +7,7 @@
 
 class TLegacyPdfParser {
 public:
-    TDocumentInfo Parse(const std::string& file_path) {
+    virtual TDocumentInfo Parse(const std::string& file_path) {
         try {
             std::unique_ptr<poppler::document> doc(poppler::document::load_from_file(file_path));
             if (!doc) {
