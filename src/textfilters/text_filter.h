@@ -7,9 +7,9 @@
 #include <iostream>
 #include <algorithm>
 
-class ITextFilter {
+class TTextFilter {
 public:
-    virtual ~ITextFilter() = default;
+    virtual ~TTextFilter() = default;
     virtual void Apply(const std::string& text) const = 0;
     virtual std::string GetName() const = 0;
 };

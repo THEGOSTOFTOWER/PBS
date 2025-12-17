@@ -1,20 +1,20 @@
 #pragma once
 
-#include "IDocumentParcer.h"
+#include "idocument_parser.h"
 #include <poppler/cpp/poppler-document.h>
 #include <poppler/cpp/poppler-page.h>
 
-class PdfParcerAdapter final: public IDocumentParcer {
+class TPdfParserAdapter final: public TIDocumentParser {
 public:
     bool SupportsFormat(const std::string& extension) const override {
         return extension == "pdf";
     }
 
-    DocumentInfo Parse(const std::string& file_path) {
+    TDocumentInfo Parse(const std::string& file_path) {
         try {
             std::unique_ptr<poppler::document> doc(poppler::document::load_from_file(file_path));
             if (!doc) {
-                throw DocumentProcessingException("Failed to load PDF document");
+                throw TDocumentProcessingException("Failed to load PDF document");
             }
             std::string text;
             const int num_pages = doc->pages();
@@ -27,7 +27,7 @@ public:
             }
             return {std::move(text), {{"format", "pdf"}}};
         } catch (const std::exception& e) {
-            throw ParsingException(file_path, std::string(e.what()));
+            throw TParsingException(file_path, std::string(e.what()));
         }
     }
 };

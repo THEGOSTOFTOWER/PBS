@@ -1,26 +1,26 @@
-#include "DocumentProcessor.h"
+#include "document_processor.h"
 
-DocumentProcessor::DocumentProcessor(ParcerFactory& factory)
+TDocumentProcessor::TDocumentProcessor(TParserFactory& factory)
     : factory_(factory) {
 }
 
-DocumentInfo DocumentProcessor::Process(const std::string& path,
+TDocumentInfo TDocumentProcessor::Process(const std::string& path,
                                         const std::vector<std::string>& filters,
                                         ProgressCallback progress) {
     try {
         progress(10);
-        auto parser = factory_.CreateParcerForFile(path);
+        auto parser = factory_.CreateParserForFile(path);
         progress(40);
-        DocumentInfo info = parser->Parse(path);
+        TDocumentInfo info = parser->Parse(path);
         progress(70);
         if (filters.empty()) {
             std::cout << info.text << std::endl;
         } else {
             for (const auto& filter : filters) {
                 try {
-                    FilterFactory::CreateFilter(filter)->Apply(info.text);
+                    TFilterFactory::CreateFilter(filter)->Apply(info.text);
                 } catch (FilterException& e) {
-                    std::cout << "Supported Filter formats: " + FilterFactory::GetSupportedFormats() << std::endl;
+                    std::cout << "Supported Filter formats: " + TFilterFactory::GetSupportedFormats() << std::endl;
                 } catch (const std::exception& e) {
                     std::cerr << e.what() << '\n';
                 }
@@ -28,7 +28,7 @@ DocumentInfo DocumentProcessor::Process(const std::string& path,
         }
         progress(100);
         return info;
-    } catch (UnsupportedFormatException& e) {
+    } catch (TUnsupportedFormatException& e) {
         std::cout << e.what() << '\n';
         std::cout << "Supported formats: ";
         for (auto format : factory_.GetSupportedFormats()) {
@@ -36,10 +36,10 @@ DocumentInfo DocumentProcessor::Process(const std::string& path,
         }
         std::cout << "\n";
         throw std::runtime_error(e.what());
-    } catch (ParsingException& e) {
+    } catch (TParsingException& e) {
         std::cout << e.what() << '\n';
         throw std::runtime_error(e.what());
-    } catch (DocumentProcessingException& e) {
+    } catch (TDocumentProcessingException& e) {
         std::cout << e.what() << '\n';
         throw std::runtime_error(e.what());
     } catch (std::exception& e) {

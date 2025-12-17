@@ -1,9 +1,9 @@
 #include <iostream>
 
-#include "processor/DocumentProcessor.h"
+#include "processor/document_processor.h"
 
 int main(int argc, char* argv[]) {
-    DocumentProcessor processor(ParcerFactory::GetInstance());
+    TDocumentProcessor processor(TParserFactory::GetInstance());
     if (argc < 2) {
         std::cout << "File name required\n";
         return 0;

@@ -1,6 +1,6 @@
-#include "TextFilter.h"
+#include "text_filter.h"
 
-class LowerCaseFilter: public ITextFilter {
+class TLowerCaseFilter: public TTextFilter {
 public:
     void Apply(const std::string& text) const override {
         std::string lowerText = text;
@@ -10,6 +10,6 @@ public:
     }
 
     std::string GetName() const override {
-        return "LowerCaseFilter";
+        return "TLowerCaseFilter";
     }
 };

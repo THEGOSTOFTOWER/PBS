@@ -1,9 +1,9 @@
 #pragma once
 
-#include "exception/CustomException.h"
+#include "exception/custom_exceptions.h"
 #include <map>
 
-struct DocumentInfo {
+struct TDocumentInfo {
     std::string text;
     std::map<std::string, std::string> metadata;
 };

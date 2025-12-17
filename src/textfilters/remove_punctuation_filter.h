@@ -1,6 +1,6 @@
-#include "TextFilter.h"
+#include "text_filter.h"
 
-class RemovePunctuationFilter: public ITextFilter {
+class TRemovePunctuationFilter: public TTextFilter {
 public:
     void Apply(const std::string& text) const override {
         std::string noPunctText = text;
@@ -11,6 +11,6 @@ public:
     }
 
     std::string GetName() const override {
-        return "RemovePunctuationFilter";
+        return "TRemovePunctuationFilter";
     }
 };

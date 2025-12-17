@@ -1,26 +1,26 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
-#include "../src/factory/ParcerFactory.h"
-#include "../src/adapter/IDocumentParcer.h"
-#include "../src/exception/CustomException.h"
-#include "../src/textfilters/TextFilterFactory.h"
-#include "../src/textfilters/TextFilter.h"
+#include "../src/factory/parser_factory.h"
+#include "../src/adapter/idocument_parser.h"
+#include "../src/exception/custom_exceptions.h"
+#include "../src/textfilters/filter_factory.h"
+#include "../src/textfilters/text_filter.h"
 #include <memory>
 #include <string>
 #include <filesystem>
 
 using namespace testing;
 
-class MockParcer: public IDocumentParcer {
+class MockParcer: public TIDocumentParser {
 public:
-    MOCK_METHOD(DocumentInfo, Parse, (const std::string& filepath), (override));
+    MOCK_METHOD(TDocumentInfo, Parse, (const std::string& filepath), (override));
     MOCK_METHOD(bool, SupportsFormat, (const std::string& format), (const, override));
 };
 
-class ParcerFactoryTest: public Test {
+class TParserFactoryTest: public Test {
 protected:
     void SetUp() override {
-        factory = &ParcerFactory::GetInstance();
+        factory = &TParserFactory::GetInstance();
 
         mockRegistry.clear();
     }
@@ -30,7 +30,7 @@ protected:
         mockRegistry.clear();
     }
 
-    std::unique_ptr<IDocumentParcer> CreateMockParcer(const std::string& format) {
+    std::unique_ptr<TIDocumentParser> CreateMockParcer(const std::string& format) {
         auto it = mockRegistry.find(format);
         if (it != mockRegistry.end()) {
             return it->second();
@@ -39,56 +39,56 @@ protected:
     }
 
     void RegisterMockParcer(const std::string& format,
-                            std::function<std::unique_ptr<IDocumentParcer>()> creator) {
+                            std::function<std::unique_ptr<TIDocumentParser>()> creator) {
         mockRegistry[format] = std::move(creator);
     }
 
-    ParcerFactory* factory;
-    std::unordered_map<std::string, std::function<std::unique_ptr<IDocumentParcer>()>> mockRegistry;
+    TParserFactory* factory;
+    std::unordered_map<std::string, std::function<std::unique_ptr<TIDocumentParser>()>> mockRegistry;
 };
 
-TEST_F(ParcerFactoryTest, CreateUnregisteredParcerThrows) {
-    EXPECT_THROW({ factory->CreateParcer("unsupported"); }, UnsupportedFormatException);
+TEST_F(TParserFactoryTest, CreateUnregisteredParcerThrows) {
+    EXPECT_THROW({ factory->CreateParser("unsupported"); }, TUnsupportedFormatException);
 }
 
-TEST_F(ParcerFactoryTest, CreateParcerForFileWithExtension) {
-    auto& realFactory = ParcerFactory::GetInstance();
+TEST_F(TParserFactoryTest, CreateParserForFileWithExtension) {
+    auto& realFactory = TParserFactory::GetInstance();
 
-    auto pdfParcer = realFactory.CreateParcerForFile("document.pdf");
+    auto pdfParcer = realFactory.CreateParserForFile("document.pdf");
     ASSERT_NE(pdfParcer, nullptr);
     EXPECT_TRUE(pdfParcer->SupportsFormat("pdf"));
 
-    auto docxParcer = realFactory.CreateParcerForFile("document.docx");
+    auto docxParcer = realFactory.CreateParserForFile("document.docx");
     ASSERT_NE(docxParcer, nullptr);
     EXPECT_TRUE(docxParcer->SupportsFormat("docx"));
 
-    auto txtParcer = realFactory.CreateParcerForFile("document.txt");
+    auto txtParcer = realFactory.CreateParserForFile("document.txt");
     ASSERT_NE(txtParcer, nullptr);
     EXPECT_TRUE(txtParcer->SupportsFormat("txt"));
 }
 
-TEST_F(ParcerFactoryTest, CreateParcerForFileWithoutExtension) {
-    EXPECT_THROW({ factory->CreateParcerForFile("document"); }, UnsupportedFormatException);
+TEST_F(TParserFactoryTest, CreateParserForFileWithoutExtension) {
+    EXPECT_THROW({ factory->CreateParserForFile("document"); }, TUnsupportedFormatException);
 }
 
-TEST_F(ParcerFactoryTest, CreateParcerForFileWithMultipleDots) {
-    auto& realFactory = ParcerFactory::GetInstance();
+TEST_F(TParserFactoryTest, CreateParserForFileWithMultipleDots) {
+    auto& realFactory = TParserFactory::GetInstance();
 
-    auto parcer = realFactory.CreateParcerForFile("my.document.pdf");
+    auto parcer = realFactory.CreateParserForFile("my.document.pdf");
     ASSERT_NE(parcer, nullptr);
     EXPECT_TRUE(parcer->SupportsFormat("pdf"));
 }
 
-TEST_F(ParcerFactoryTest, CaseInsensitiveFormatSupport) {
-    auto& realFactory = ParcerFactory::GetInstance();
+TEST_F(TParserFactoryTest, CaseInsensitiveFormatSupport) {
+    auto& realFactory = TParserFactory::GetInstance();
 
-    EXPECT_NO_THROW(realFactory.CreateParcer("PDF"));
-    EXPECT_NO_THROW(realFactory.CreateParcer("DOCX"));
-    EXPECT_NO_THROW(realFactory.CreateParcer("TXT"));
+    EXPECT_NO_THROW(realFactory.CreateParser("PDF"));
+    EXPECT_NO_THROW(realFactory.CreateParser("DOCX"));
+    EXPECT_NO_THROW(realFactory.CreateParser("TXT"));
 
-    EXPECT_NO_THROW(realFactory.CreateParcer("Pdf"));
-    EXPECT_NO_THROW(realFactory.CreateParcer("Docx"));
-    EXPECT_NO_THROW(realFactory.CreateParcer("Txt"));
+    EXPECT_NO_THROW(realFactory.CreateParser("Pdf"));
+    EXPECT_NO_THROW(realFactory.CreateParser("Docx"));
+    EXPECT_NO_THROW(realFactory.CreateParser("Txt"));
 }
 
 class OutputCapture {
@@ -134,7 +134,7 @@ protected:
 };
 
 TEST_F(FilterFactoryTest, LowerCaseFilterPrintsOutput) {
-    auto filter = FilterFactory::CreateFilter("lowercase");
+    auto filter = TFilterFactory::CreateFilter("lowercase");
     ASSERT_NE(filter, nullptr);
 
     std::string input = "Hello WORLD!";
@@ -159,7 +159,7 @@ TEST_F(FilterFactoryTest, LowerCaseFilterPrintsOutput) {
 }
 
 TEST_F(FilterFactoryTest, UpperCaseFilterPrintsOutput) {
-    auto filter = FilterFactory::CreateFilter("uppercase");
+    auto filter = TFilterFactory::CreateFilter("uppercase");
     ASSERT_NE(filter, nullptr);
 
     std::string input = "Hello World!";
@@ -184,7 +184,7 @@ TEST_F(FilterFactoryTest, UpperCaseFilterPrintsOutput) {
 }
 
 TEST_F(FilterFactoryTest, NoPunctuationFilterPrintsOutput) {
-    auto filter = FilterFactory::CreateFilter("nopunctuation");
+    auto filter = TFilterFactory::CreateFilter("nopunctuation");
     ASSERT_NE(filter, nullptr);
 
     std::string input = "Hello, World! How are you?";
@@ -209,7 +209,7 @@ TEST_F(FilterFactoryTest, NoPunctuationFilterPrintsOutput) {
 }
 
 TEST_F(FilterFactoryTest, WordCountFilterPrintsWordCount) {
-    auto filter = FilterFactory::CreateFilter("wordcount");
+    auto filter = TFilterFactory::CreateFilter("wordcount");
     ASSERT_NE(filter, nullptr);
 
     std::string input = "Hello World! This is a test.";
@@ -230,11 +230,11 @@ TEST_F(FilterFactoryTest, WordCountFilterPrintsWordCount) {
         result.pop_back();
     }
 
-    EXPECT_EQ(result, "[WordCountFilter] Words found: 6");
+    EXPECT_EQ(result, "[WordCount] Words found: 6");
 }
 
 TEST_F(FilterFactoryTest, EmptyInputHandling) {
-    auto filter = FilterFactory::CreateFilter("lowercase");
+    auto filter = TFilterFactory::CreateFilter("lowercase");
     ASSERT_NE(filter, nullptr);
 
     std::string input = "";
@@ -259,7 +259,7 @@ TEST_F(FilterFactoryTest, EmptyInputHandling) {
 }
 
 TEST_F(FilterFactoryTest, SpecialCharactersHandling) {
-    auto filter = FilterFactory::CreateFilter("lowercase");
+    auto filter = TFilterFactory::CreateFilter("lowercase");
     ASSERT_NE(filter, nullptr);
 
     std::string input = "TEST: 123 @#$%";
@@ -284,7 +284,7 @@ TEST_F(FilterFactoryTest, SpecialCharactersHandling) {
 }
 
 TEST_F(FilterFactoryTest, MultiLineTextHandling) {
-    auto filter = FilterFactory::CreateFilter("uppercase");
+    auto filter = TFilterFactory::CreateFilter("uppercase");
     ASSERT_NE(filter, nullptr);
 
     std::string input = "First line\nSecond line\nThird line";
@@ -306,18 +306,18 @@ TEST_F(FilterFactoryTest, MultiLineTextHandling) {
 }
 
 TEST_F(FilterFactoryTest, UnknownFilterThrowsException) {
-    EXPECT_THROW({ FilterFactory::CreateFilter("unknown"); }, FilterException);
+    EXPECT_THROW({ TFilterFactory::CreateFilter("unknown"); }, FilterException);
 }
 
 TEST_F(FilterFactoryTest, CreateAllFilters) {
-    EXPECT_NO_THROW(FilterFactory::CreateFilter("lowercase"));
-    EXPECT_NO_THROW(FilterFactory::CreateFilter("uppercase"));
-    EXPECT_NO_THROW(FilterFactory::CreateFilter("nopunctuation"));
-    EXPECT_NO_THROW(FilterFactory::CreateFilter("wordcount"));
+    EXPECT_NO_THROW(TFilterFactory::CreateFilter("lowercase"));
+    EXPECT_NO_THROW(TFilterFactory::CreateFilter("uppercase"));
+    EXPECT_NO_THROW(TFilterFactory::CreateFilter("nopunctuation"));
+    EXPECT_NO_THROW(TFilterFactory::CreateFilter("wordcount"));
 }
 
 TEST_F(FilterFactoryTest, GetSupportedFormatsReturnsCorrectString) {
-    std::string formats = FilterFactory::GetSupportedFormats();
+    std::string formats = TFilterFactory::GetSupportedFormats();
 
     EXPECT_NE(formats.find("lowercase"), std::string::npos);
     EXPECT_NE(formats.find("uppercase"), std::string::npos);
