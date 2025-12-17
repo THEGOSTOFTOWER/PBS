@@ -13,22 +13,22 @@ public:
     DocumentInfo Parse(const std::string& file_path) override {
         try {
             int err = 0;
-            zip* archive = zip_open(file_path.c_str(), ZIP_RDONLY, &err);
+            zip* archive = zip_open(file_path.c_str(), 0, &err);
             if (!archive) {
-                throw std::runtime_error("Failed to open DOCX file");
+                throw DocumentProcessingException("Failed to open DOCX file");
             }
 
             const char* xml_path = "word/document.xml";
             struct zip_stat stat;
             if (zip_stat(archive, xml_path, 0, &stat) != 0) {
                 zip_close(archive);
-                throw std::runtime_error("Failed to find word/document.xml in DOCX");
+                throw DocumentProcessingException("Failed to find word/document.xml in DOCX");
             }
 
             zip_file* xml_file = zip_fopen(archive, xml_path, 0);
             if (!xml_file) {
                 zip_close(archive);
-                throw std::runtime_error("Failed to open word/document.xml");
+                throw DocumentProcessingException("Failed to open word/document.xml");
             }
 
             std::string xml;
@@ -43,7 +43,7 @@ public:
 
             pugi::xml_document doc;
             if (!doc.load_string(xml.c_str())) {
-                throw std::runtime_error("Failed to parse DOCX XML");
+                throw DocumentProcessingException("Failed to parse DOCX XML");
             }
 
             DocumentInfo info;
@@ -56,7 +56,7 @@ public:
             info.metadata = {{"format", "docx"}};
 
             return info;
-        } catch (const std::exception& e) {
+        } catch (const DocumentProcessingException& e) {
             throw ParsingException(file_path, std::string(e.what()));
         }
     }
