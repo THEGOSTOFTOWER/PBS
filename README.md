@@ -3,6 +3,7 @@
 Запуск
 
 mkdir build & cd build
+
 make .. -DBUILD_TEST=ON (для тестов)
 
 bash ../test/run_style_check.sh - проверка на стиль
