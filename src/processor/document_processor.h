@@ -1,8 +1,8 @@
 #pragma once
 
 #include "parsers/parser_factory.h"
-#include "textfilters/text_filter.h"
 #include "textfilters/filter_factory.h"
+
 #include <functional>
 #include <stdexcept>
 #include <iostream>

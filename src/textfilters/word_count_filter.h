@@ -1,13 +1,20 @@
+#pragma once
+
 #include "text_filter.h"
 
-class TWordCountFilter: public TTextFilter {
+#include <iterator>
+#include <sstream>
+#include <algorithm>
+
+class TWordCountFilter: public ITextFilter {
 public:
-    void Apply(const std::string& text) const override {
+    std::string Apply(const std::string& text) const override {
         int words = std::distance(
             std::istream_iterator<std::string>(
                 std::istringstream(text) >> std::ws),
             std::istream_iterator<std::string>());
-        std::cout << "[WordCount] Words found: " << words << std::endl;
+        std::string res = "[WordCount] Words found: " + std::to_string(words);
+        return res;
     }
 
     std::string GetName() const override {

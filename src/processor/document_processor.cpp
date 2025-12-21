@@ -18,11 +18,11 @@ TDocumentInfo TDocumentProcessor::Process(const std::string& path,
         } else {
             for (const auto& filter : filters) {
                 try {
-                    TFilterFactory::CreateFilter(filter)->Apply(info.text);
+                    std::cout << TFilterFactory::CreateFilter(filter)->Apply(info.text) << std::endl;
                 } catch (FilterException& e) {
                     std::cout << "Supported Filter formats: " + TFilterFactory::GetSupportedFormats() << std::endl;
                 } catch (const std::exception& e) {
-                    std::cerr << e.what() << '\n';
+                    std::cout << e.what() << '\n';
                 }
             }
         }

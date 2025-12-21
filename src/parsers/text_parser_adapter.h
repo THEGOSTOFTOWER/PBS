@@ -1,15 +1,17 @@
+#pragma once
+
 #include "legacy_parsers/legacy_text_parser.h"
 
-class TTextParserAdapter: public TIDocumentParser {
-    std::unique_ptr<TLegacyTextParser> OldParser;
+class TTextParserAdapter: public IDocumentParser {
+    std::unique_ptr<TLegacyTextParser> oldparser_;
 
 public:
     TTextParserAdapter()
-        : OldParser(std::make_unique<TLegacyTextParser>()) {
+        : oldparser_(std::make_unique<TLegacyTextParser>()) {
     }
 
     explicit TTextParserAdapter(std::unique_ptr<TLegacyTextParser> parser)
-        : OldParser(std::move(parser)) {
+        : oldparser_(std::move(parser)) {
     }
 
     TTextParserAdapter(const TTextParserAdapter&) = delete;
@@ -22,6 +24,6 @@ public:
     }
 
     TDocumentInfo Parse(const std::string& file_path) override {
-        return OldParser->Parse(file_path);
+        return oldparser_->Parse(file_path);
     }
 };

@@ -1,13 +1,18 @@
+#pragma once
+
 #include "text_filter.h"
 
-class TRemovePunctuationFilter: public TTextFilter {
+#include <iterator>
+#include <algorithm>
+
+class TRemovePunctuationFilter: public ITextFilter {
 public:
-    void Apply(const std::string& text) const override {
+    std::string Apply(const std::string& text) const override {
         std::string noPunctText = text;
         noPunctText.erase(std::remove_if(noPunctText.begin(), noPunctText.end(),
                                          [](unsigned char c) { return std::ispunct(c); }),
                           noPunctText.end());
-        std::cout << "No punctuation: " << noPunctText << std::endl;
+        return "No punctuation: " + noPunctText;
     }
 
     std::string GetName() const override {

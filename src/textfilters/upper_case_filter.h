@@ -1,12 +1,18 @@
+#pragma once
+
 #include "text_filter.h"
 
-class TUpperCaseFilter: public TTextFilter {
+#include <iterator>
+#include <algorithm>
+
+class TUpperCaseFilter: public ITextFilter {
 public:
-    void Apply(const std::string& text) const override {
+    std::string Apply(const std::string& text) const override {
         std::string upperText = text;
         std::transform(upperText.begin(), upperText.end(), upperText.begin(),
                        [](unsigned char c) { return std::toupper(c); });
-        std::cout << "Upper case: " << upperText << std::endl;
+        std::string res = "Upper case: " + upperText;
+        return res;
     }
 
     std::string GetName() const override {

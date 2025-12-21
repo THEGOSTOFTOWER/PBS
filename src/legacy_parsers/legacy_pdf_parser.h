@@ -27,4 +27,6 @@ public:
             throw TParsingException(file_path, std::string(e.what()));
         }
     }
+
+    virtual ~TLegacyPdfParser() = default;
 };

@@ -1,4 +1,7 @@
 #include "parser_factory.h"
+#include "pdf_parser_adapter.h"
+#include "docx_parser_adapter.h"
+#include "text_parser_adapter.h"
 
 TParserFactory::TParserFactory() {
     RegisterParser("pdf", []() { return std::make_unique<TPdfParserAdapter>(); });
@@ -15,7 +18,7 @@ void TParserFactory::RegisterParser(const std::string& format, ParserCreator cre
     registeredParsers_[format] = std::move(creator);
 }
 
-std::unique_ptr<TIDocumentParser> TParserFactory::CreateParser(const std::string& format) const {
+std::unique_ptr<IDocumentParser> TParserFactory::CreateParser(const std::string& format) const {
     std::string formatL(format.size(), '\0');
     std::transform(format.begin(), format.end(), formatL.begin(), ::tolower);
     auto it = registeredParsers_.find(formatL);
@@ -26,7 +29,7 @@ std::unique_ptr<TIDocumentParser> TParserFactory::CreateParser(const std::string
     return it->second();
 }
 
-std::unique_ptr<TIDocumentParser> TParserFactory::CreateParserForFile(const std::string& filePath) const {
+std::unique_ptr<IDocumentParser> TParserFactory::CreateParserForFile(const std::string& filePath) const {
     namespace fs = std::filesystem;
 
     fs::path path(filePath);

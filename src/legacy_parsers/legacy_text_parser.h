@@ -1,6 +1,7 @@
 #pragma once
 
 #include "dto/document_info.h"
+
 #include "fstream"
 #include "sstream"
 
@@ -19,4 +20,6 @@ public:
             throw TParsingException(file_path, e.what());
         }
     }
+
+    virtual ~TLegacyTextParser() = default;
 };

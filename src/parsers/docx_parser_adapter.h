@@ -2,16 +2,16 @@
 
 #include "legacy_parsers/legacy_docx_parser.h"
 
-class TDocxParserAdapter: public TIDocumentParser {
-    std::unique_ptr<TLegacyDocxParser> OldParser;
+class TDocxParserAdapter: public IDocumentParser {
+    std::unique_ptr<TLegacyDocxParser> oldparser_;
 
 public:
     TDocxParserAdapter()
-        : OldParser(std::make_unique<TLegacyDocxParser>()) {
+        : oldparser_(std::make_unique<TLegacyDocxParser>()) {
     }
 
     explicit TDocxParserAdapter(std::unique_ptr<TLegacyDocxParser> parser)
-        : OldParser(std::move(parser)) {
+        : oldparser_(std::move(parser)) {
     }
 
     TDocxParserAdapter(const TDocxParserAdapter&) = delete;
@@ -24,6 +24,6 @@ public:
     }
 
     TDocumentInfo Parse(const std::string& file_path) override {
-        return OldParser->Parse(file_path);
+        return oldparser_->Parse(file_path);
     }
 };

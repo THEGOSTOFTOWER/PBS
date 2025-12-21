@@ -1,6 +1,7 @@
 #pragma once
 
 #include "dto/document_info.h"
+
 #include <zip.h>
 #include <pugixml.hpp>
 
@@ -56,4 +57,6 @@ public:
             throw TParsingException(file_path, std::string(e.what()));
         }
     }
+
+    virtual ~TLegacyDocxParser() = default;
 };

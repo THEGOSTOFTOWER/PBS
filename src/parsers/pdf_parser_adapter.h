@@ -1,19 +1,22 @@
-#include "idocument_parser.h"
+#pragma once
+
+#include "document_parser.h"
 #include "legacy_parsers/legacy_pdf_parser.h"
+
 #include <poppler/cpp/poppler-document.h>
 #include <poppler/cpp/poppler-page.h>
 
-class TPdfParserAdapter final: public TIDocumentParser {
+class TPdfParserAdapter final: public IDocumentParser {
 private:
-    std::unique_ptr<TLegacyPdfParser> OldParser;
+    std::unique_ptr<TLegacyPdfParser> oldparser_;
 
 public:
     TPdfParserAdapter()
-        : OldParser(std::make_unique<TLegacyPdfParser>()) {
+        : oldparser_(std::make_unique<TLegacyPdfParser>()) {
     }
 
     explicit TPdfParserAdapter(std::unique_ptr<TLegacyPdfParser> parser)
-        : OldParser(std::move(parser)) {
+        : oldparser_(std::move(parser)) {
     }
 
     TPdfParserAdapter(const TPdfParserAdapter&) = delete;
@@ -27,6 +30,6 @@ public:
     }
 
     TDocumentInfo Parse(const std::string& file_path) override {
-        return OldParser->Parse(file_path);
+        return oldparser_->Parse(file_path);
     }
 };
